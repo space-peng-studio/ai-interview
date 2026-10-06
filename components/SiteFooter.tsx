@@ -47,7 +47,7 @@ export default function SiteFooter() {
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>© {new Date().getFullYear()} AI Interview. All rights reserved.</p>
-          <p>題目與評分由 OpenAI 模型產生，僅供練習參考。</p>
+          <p>題目與評分由你選擇的 AI 模型（OpenAI / Gemini）產生，僅供練習參考。</p>
         </div>
       </div>
     </footer>

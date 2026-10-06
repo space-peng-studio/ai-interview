@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "./Logo";
+import SettingsButton from "./SettingsButton";
 
 const NAV_LINKS = [
   { href: "/#features", label: "功能" },
@@ -20,12 +21,15 @@ export default function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <Link
-          href="/interview"
-          className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper transition-transform hover:-translate-y-0.5"
-        >
-          開始練習 →
-        </Link>
+        <div className="flex items-center gap-2">
+          <SettingsButton />
+          <Link
+            href="/interview"
+            className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper transition-transform hover:-translate-y-0.5"
+          >
+            開始練習 →
+          </Link>
+        </div>
       </div>
     </header>
   );
