@@ -32,15 +32,11 @@ const STEPS = [
 const FAQS = [
   {
     q: "需要註冊帳號嗎？",
-    a: "不需要。只要在右上角的鑰匙圖示設定好你自己的 OpenAI 或 Gemini API 金鑰，輸入職稱就能直接開始。",
-  },
-  {
-    q: "為什麼要用我自己的 API 金鑰？安全嗎？",
-    a: "AI Interview 採用 BYOK（自備金鑰）模式，使用費用直接由你的 OpenAI 或 Google 帳戶計算。金鑰只存在你這個瀏覽器的 localStorage，練習時隨請求轉給 AI 服務，我們的伺服器不會儲存或記錄它。在公用電腦上用完，記得到設定裡清除金鑰。",
+    a: "不需要。打開練習頁面、輸入職稱就能直接開始。",
   },
   {
     q: "我的回答會被保存嗎？",
-    a: "我們的伺服器不會儲存你的回答。回答只會傳送給你選擇的 AI 服務（OpenAI 或 Gemini）用來產生下一題和評分，關掉頁面後紀錄就會消失。",
+    a: "我們的伺服器不會儲存你的回答。回答只會傳送給 OpenAI 用來產生下一題和評分，關掉頁面後紀錄就會消失。",
   },
   {
     q: "示範回答可以直接背下來用嗎？",
@@ -120,7 +116,7 @@ export default function Home() {
           <div className="animate-rise">
             <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs text-muted">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              自備 OpenAI / Gemini 金鑰 · 不需註冊
+              AI 面試官 · 不需註冊
             </span>
             <h1 className="mt-6 font-serif text-[2.6rem] font-black leading-[1.15] tracking-tight sm:text-6xl">
               下一場面試，
@@ -136,7 +132,7 @@ export default function Home() {
               輸入想應徵的職稱，AI 面試官會根據你的回答一路追問。結束後給你逐題評分、具體的精進步驟，還有示範回答。
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <CtaButton>開始模擬面試</CtaButton>
+              <CtaButton>免費開始模擬面試</CtaButton>
               <Link href="#how" className="px-2 py-3.5 text-sm font-medium text-muted transition-colors hover:text-ink">
                 看看怎麼運作
               </Link>

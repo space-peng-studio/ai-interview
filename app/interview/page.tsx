@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { PROVIDERS } from "@/lib/providers";
-import { aiHeaders, hasApiKey, openSettings, useAiSettings } from "@/lib/ai-settings";
 
 const QUESTION_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const JOB_SUGGESTIONS = ["前端工程師", "產品經理", "UI/UX 設計師", "行銷企劃", "資料分析師"];
@@ -67,43 +65,7 @@ function scoreBadgeClass(score: number) {
   return "bg-accent-soft text-accent";
 }
 
-// 顯示目前使用的 AI 服務；還沒設定金鑰時提醒使用者先設定
-function ProviderStatus() {
-  const settings = useAiSettings();
-  if (settings === null) return <div className="h-[74px]" />;
-
-  if (!hasApiKey(settings)) {
-    return (
-      <div className="flex flex-col gap-3 rounded-2xl border border-accent/40 bg-accent-soft p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="font-semibold">先設定你的 API 金鑰</p>
-          <p className="mt-1 text-sm text-muted">AI Interview 使用你自己的 OpenAI 或 Gemini 金鑰，金鑰只存在這個瀏覽器。</p>
-        </div>
-        <button type="button" onClick={openSettings} className="shrink-0 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper transition-transform hover:-translate-y-0.5">
-          設定金鑰
-        </button>
-      </div>
-    );
-  }
-
-  const provider = PROVIDERS[settings.provider];
-  return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-5 py-3.5 text-sm">
-      <span className="flex items-center gap-2">
-        <span className="h-2 w-2 rounded-full bg-good" />
-        使用 <strong className="font-semibold">{provider.label}</strong>
-        <span className="font-mono text-xs text-muted">{provider.model}</span>
-      </span>
-      <button type="button" onClick={openSettings} className="text-muted underline-offset-2 transition-colors hover:text-ink hover:underline">
-        變更
-      </button>
-    </div>
-  );
-}
-
 export default function InterviewPage() {
-  const settings = useAiSettings();
-  const ready = hasApiKey(settings);
   const [stage, setStage] = useState<Stage>("start");
   const [jobTitle, setJobTitle] = useState("");
   const [totalQuestions, setTotalQuestions] = useState(3);
@@ -113,28 +75,19 @@ export default function InterviewPage() {
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [needsKey, setNeedsKey] = useState(false);
 
   // 把職稱和目前的問答送給 API，拿回下一題或最後的評分
   async function callInterview(nextHistory: QA[]) {
-    if (settings === null || !hasApiKey(settings)) {
-      openSettings();
-      return;
-    }
     setLoading(true);
     setError("");
-    setNeedsKey(false);
     try {
       const res = await fetch("/api/interview", {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...aiHeaders(settings) },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobTitle, totalQuestions, history: nextHistory }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setNeedsKey(res.status === 401);
-        throw new Error(data.error ?? "發生錯誤，請稍後再試");
-      }
+      if (!res.ok) throw new Error(data.error ?? "發生錯誤，請稍後再試");
 
       setHistory(nextHistory);
       setAnswer("");
@@ -188,11 +141,7 @@ export default function InterviewPage() {
               AI 面試官會一題一題問你，並根據你的回答追問。全部答完後，你會拿到總分、逐題評分、精進步驟與示範回答。
             </p>
 
-            <div className="mt-10">
-              <ProviderStatus />
-            </div>
-
-            <form onSubmit={handleStart} className="mt-4 rounded-2xl border border-line bg-surface p-6 shadow-[0_30px_80px_-40px_rgba(22,20,15,0.35)] sm:p-8">
+            <form onSubmit={handleStart} className="mt-10 rounded-2xl border border-line bg-surface p-6 shadow-[0_30px_80px_-40px_rgba(22,20,15,0.35)] sm:p-8">
               <label htmlFor="jobTitle" className="text-sm font-semibold">
                 職稱
               </label>
@@ -238,7 +187,7 @@ export default function InterviewPage() {
               </div>
               <p className="mt-2 text-xs text-muted">每題大約 1–2 分鐘，{totalQuestions} 題約需 {totalQuestions * 2} 分鐘。</p>
 
-              <button type="submit" disabled={loading || !ready || jobTitle.trim() === ""} className={`mt-8 w-full ${primaryButtonClass}`}>
+              <button type="submit" disabled={loading || jobTitle.trim() === ""} className={`mt-8 w-full ${primaryButtonClass}`}>
                 {loading ? (
                   <>
                     <Spinner />
@@ -410,16 +359,7 @@ export default function InterviewPage() {
           </div>
         )}
 
-        {error && (
-          <div className="mt-6 flex items-center justify-between gap-4 rounded-xl bg-accent-soft px-4 py-3 text-sm text-accent">
-            <p>{error}</p>
-            {needsKey && (
-              <button type="button" onClick={openSettings} className="shrink-0 font-semibold underline underline-offset-2">
-                前往設定
-              </button>
-            )}
-          </div>
-        )}
+        {error && <p className="mt-6 rounded-xl bg-accent-soft px-4 py-3 text-sm text-accent">{error}</p>}
       </div>
     </main>
   );
